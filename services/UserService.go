@@ -1,4 +1,4 @@
-package Services
+package services
 
 type IUserService interface {
 	GetName(userid int) string

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"kit/Services"
+	"kit/services"
 	"net/http"
 
 	httptransport "github.com/go-kit/kit/transport/http"
@@ -9,10 +9,10 @@ import (
 )
 
 func main() {
-	user := Services.UserService{}
-	endp := Services.GenUserEndpoint(user)
+	user := services.UserService{}
+	endp := services.GenUserEndpoint(user)
 
-	serverHander := httptransport.NewServer(endp, Services.DecodeUserRequest, Services.EncodeUserResponse)
+	serverHander := httptransport.NewServer(endp, services.DecodeUserRequest, services.EncodeUserResponse)
 	//路由
 	r := mux.NewRouter()
 	r.Methods("GET").Path(`/user/{uid:\d+}`).Handler(serverHander)
