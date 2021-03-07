@@ -5,10 +5,19 @@ import (
 	"log"
 )
 
-func RegService() {
+var ConsulClient *api.Client
+
+func init() {
 	config := api.DefaultConfig()
 	config.Address = "127.0.0.1:8500"
+	client, err := api.NewClient(config)
+	if err != nil {
+		log.Fatal(err)
+	}
+	ConsulClient = client
+}
 
+func RegService() {
 	reg := api.AgentServiceRegistration{}
 	reg.ID = "userservice"
 	reg.Name = "userservice"
@@ -22,11 +31,12 @@ func RegService() {
 
 	reg.Check = &check
 
-	client, err := api.NewClient(config)
+	err := ConsulClient.Agent().ServiceRegister(&reg)
 	if err != nil {
 		log.Fatal(err)
 	}
+}
 
-	client.Agent().ServiceRegister(&reg)
-
+func UnRegService() {
+	ConsulClient.Agent().ServiceDeregister("userservice")
 }

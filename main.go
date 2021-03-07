@@ -1,9 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"kit/services"
 	"kit/util"
+	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
@@ -24,6 +29,22 @@ func main() {
 		})
 	}
 	//http.Lis
-	util.RegService() //注册服务
-	http.ListenAndServe(":10125", r)
+	errChan := make(chan error)
+	go (func() {
+		util.RegService() //注册服务
+		err := http.ListenAndServe(":10125", r)
+		if err != nil {
+			log.Println(err)
+			errChan <- err
+		}
+	})()
+
+	go (func() {
+		signChan := make(chan os.Signal)
+		signal.Notify(signChan, syscall.SIGINT, syscall.SIGTERM)
+		errChan <- fmt.Errorf("%s", <-signChan)
+	})()
+	getErr := <-errChan
+	util.UnRegService()
+	log.Println(getErr)
 }
