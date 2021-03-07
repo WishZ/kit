@@ -15,7 +15,13 @@ func main() {
 	serverHander := httptransport.NewServer(endp, services.DecodeUserRequest, services.EncodeUserResponse)
 	//路由
 	r := mux.NewRouter()
-	r.Methods("GET").Path(`/user/{uid:\d+}`).Handler(serverHander)
+	{
+		r.Methods("GET", "DELETE").Path(`/user/{uid:\d+}`).Handler(serverHander)
+		r.Methods("GET").Path("/health").HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+			writer.Header().Set("Content-type", "application/json")
+			writer.Write([]byte(`{"status":"ok"}`))
+		})
+	}
 	//http.Lis
-	http.ListenAndServe(":9001", r)
+	http.ListenAndServe(":10125", r)
 }
