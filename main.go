@@ -2,6 +2,7 @@ package main
 
 import (
 	"kit/services"
+	"kit/util"
 	"net/http"
 
 	httptransport "github.com/go-kit/kit/transport/http"
@@ -23,5 +24,6 @@ func main() {
 		})
 	}
 	//http.Lis
+	util.RegService() //注册服务
 	http.ListenAndServe(":10125", r)
 }
