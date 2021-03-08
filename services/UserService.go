@@ -15,7 +15,7 @@ func (this UserService) GetName(userid int) string {
 		return "111"
 	}
 
-	return ""
+	return "222"
 }
 
 func (this UserService) DelUser(userid int) error {
